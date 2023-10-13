@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -41,11 +42,16 @@ func ValidateToken(ctx *gin.Context, token string) error {
 
 func GetTokenInHeaderAndVerify(ctx *gin.Context) error {
 	authorizationHeaderKey := ctx.GetHeader("authorization")
-	fields := strings.Fields(authorizationHeaderKey)
-	tokenToValidate := fields[1]
-	errOnValiteToken := ValidateToken(ctx, tokenToValidate)
-	if errOnValiteToken != nil {
-		return errOnValiteToken
+
+	if len(strings.Split(authorizationHeaderKey, " ")) == 2 {
+		fields := strings.Fields(authorizationHeaderKey)
+		tokenToValidate := fields[1]
+		errOnValiteToken := ValidateToken(ctx, tokenToValidate)
+		if errOnValiteToken != nil {
+			return errOnValiteToken
+		}
+		return nil
 	}
-	return nil
+	ctx.JSON(http.StatusUnauthorized, "Token is invalid")
+	return ctx.Error(errors.New("Token is invalid"))
 }
