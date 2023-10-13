@@ -6,6 +6,7 @@ import (
 	"time"
 
 	db "github.com/dlmoraes/gofinance-backend/db/sqlc"
+	"github.com/dlmoraes/gofinance-backend/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +21,11 @@ type createAccountRequest struct {
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req createAccountRequest
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
@@ -65,6 +71,11 @@ type getAccountRequest struct {
 }
 
 func (server *Server) getAccount(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req getAccountRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
@@ -90,6 +101,11 @@ type deleteAccountRequest struct {
 }
 
 func (server *Server) deleteAccount(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req getAccountRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
@@ -118,6 +134,11 @@ type updateAccountRequest struct {
 }
 
 func (server *Server) updateAccount(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req updateAccountRequest
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
@@ -150,6 +171,11 @@ type getAccountsRequest struct {
 }
 
 func (server *Server) getAccounts(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req getAccountsRequest
 	err := ctx.ShouldBindJSON(&req)
 
@@ -182,6 +208,11 @@ type getAccountsGraphRequest struct {
 }
 
 func (server *Server) getAccountGraph(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req getAccountsGraphRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
@@ -208,6 +239,11 @@ type getAccountsReportsRequest struct {
 }
 
 func (server *Server) getAccountsReports(ctx *gin.Context) {
+	errOnValidateToken := util.GetTokenInHeaderAndVerify(ctx)
+	if errOnValidateToken != nil {
+		return
+	}
+
 	var req getAccountsReportsRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
