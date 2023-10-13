@@ -1,12 +1,11 @@
 package api
 
 import (
-	"bytes"
-	"crypto/sha512"
 	"database/sql"
 	"net/http"
 	"time"
 
+	"github.com/dlmoraes/gofinance-backend/util"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -45,9 +44,7 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	hashedInput := sha512.Sum512_256([]byte(req.Password))
-	trimmedHash := bytes.Trim(hashedInput[:], "\x00")
-	preparedPassword := string(trimmedHash)
+	preparedPassword := util.HandlePreparativeHash(req.Password)
 	plainTextInBytes := []byte(preparedPassword)
 	hashTextInBytes := []byte(user.Password)
 
