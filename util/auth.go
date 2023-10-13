@@ -1,6 +1,8 @@
 package util
 
 import (
+	"bytes"
+	"crypto/sha512"
 	"errors"
 	"net/http"
 	"strings"
@@ -54,4 +56,11 @@ func GetTokenInHeaderAndVerify(ctx *gin.Context) error {
 	}
 	ctx.JSON(http.StatusUnauthorized, "Token is invalid")
 	return ctx.Error(errors.New("Token is invalid"))
+}
+
+func HandlePreparativeHash(inputPassword string) string {
+	hashedInput := sha512.Sum512_256([]byte(inputPassword))
+	trimmedHash := bytes.Trim(hashedInput[:], "\x00")
+	preparedPassword := string(trimmedHash)
+	return preparedPassword
 }

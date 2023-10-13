@@ -1,12 +1,11 @@
 package api
 
 import (
-	"bytes"
-	"crypto/sha512"
 	"database/sql"
 	"net/http"
 
 	db "github.com/dlmoraes/gofinance-backend/db/sqlc"
+	"github.com/dlmoraes/gofinance-backend/util"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,11 +21,10 @@ func (server *Server) createUser(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
-	hashedInput := sha512.Sum512_256([]byte(req.Password))
-	trimmedHash := bytes.Trim(hashedInput[:], "\x00")
-	preparedPassword := string(trimmedHash)
+	preparedPassword := util.HandlePreparativeHash(req.Password)
 	passwordHashInBytes, err := bcrypt.GenerateFromPassword([]byte(preparedPassword), bcrypt.DefaultCost)
 
 	if err != nil {
@@ -46,6 +44,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
 
 	ctx.JSON(http.StatusOK, user)
@@ -60,6 +59,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
+		return
 	}
 
 	user, err := server.store.GetUser(ctx, req.Username)
@@ -85,6 +85,7 @@ func (server *Server) getUserById(ctx *gin.Context) {
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
+		return
 	}
 
 	user, err := server.store.GetUserById(ctx, req.ID)
